@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<cinder>
+<block
+	name="OpenAL"
+	id="org.libcinder.openal"
+	author="Michael Romero"
+	version="1.15.1"
+	>
+	<supports os="macosx" />
+	<supports os="msw" />
+	
+	<headerPattern>include/*.h</headerPattern>
+		
+	<includePath>include</includePath>
+	
+	<platform os="macosx">
+		<platform config="Debug">
+			<staticLibrary>lib/macosx/x86/libOpenAL_d.a</staticLibrary>
+		</platform>
+		<platform config="Release">
+			<staticLibrary>lib/macosx/x86/libOpenAL.a</staticLibrary>
+		</platform>		
+	</platform>
+	<platform os="msw">
+		<platform config="Debug">
+			<staticLibrary>lib/msw/x86/OpenAL_d.lib</staticLibrary>
+		</platform>
+		<platform config="Release">
+			<staticLibrary>lib/msw/x86/OpenAL.lib</staticLibrary>
+		</platform>
+	</platform>	
+</block>
+
+</cinder>
