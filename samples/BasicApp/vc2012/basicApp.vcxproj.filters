@@ -13,10 +13,19 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav</Extensions>
     </Filter>
+    <Filter Include="Blocks">
+      <UniqueIdentifier>{0641e5ae-2145-4001-abc7-87c4f12fbd39}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Blocks\OpenAL">
+      <UniqueIdentifier>{492ba04d-fcbb-4253-bc7d-e91e05ac12d2}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\src\basicApp.cpp">
       <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\OpenAL.cpp">
+      <Filter>Blocks\OpenAL</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -27,6 +36,9 @@
   <ItemGroup>
     <ClInclude Include="..\include\Resources.h">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\OpenAL.h">
+      <Filter>Blocks\OpenAL</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

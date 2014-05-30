@@ -21,23 +21,23 @@ class BasicApp : public AppBasic {
 	list<Vec2f>		mPoints;
 
     // The sound effect source to be played
-    ALuint          m_sfx1;
+    OpenAL::Sound*  m_pSfx1;
 };
 
 void BasicApp::setup()
 {
     OpenAL::InitOpenAL();
-    m_sfx1 = OpenAL::CreateSource(OpenAL::CreateBuffer(ci::app::loadResource(RES_SFX1_SOUND)));
+    m_pSfx1 = new OpenAL::Sound(OpenAL::CreateBuffer(ci::app::loadResource(RES_SFX1_SOUND)));
 }
 void BasicApp::shutdown()
 {
-    alDeleteSources(1, &m_sfx1);
+    delete m_pSfx1;
     OpenAL::DestroyOpenAL();
 }
 
 void BasicApp::mouseDown( MouseEvent event )
 {
-    alSourcePlay(m_sfx1);
+    m_pSfx1->Play();
 }
 
 void BasicApp::mouseDrag( MouseEvent event )
