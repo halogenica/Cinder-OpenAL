@@ -209,6 +209,11 @@ static ALuint CreateBuffer(const ci::DataSourceRef& ref)
     return alBuffer;
 }
 
+static void DestroyBuffer(ALuint alBuffer)
+{
+    alDeleteBuffers(1, &alBuffer);
+}
+
 // TODO: allow users to create and manage their own sources
 
 

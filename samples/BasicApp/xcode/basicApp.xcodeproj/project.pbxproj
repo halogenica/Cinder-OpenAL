@@ -17,7 +17,8 @@
 		00E9FF3515AFD8E800D02D22 /* CoreLocation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 00E9FF3415AFD8E700D02D22 /* CoreLocation.framework */; };
 		1F24261D1938093B0020A026 /* OpenAL.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1F24261C1938093B0020A026 /* OpenAL.cpp */; };
 		1F84AE5119157F3000943C3B /* CoreAudio.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1F84AE5019157F3000943C3B /* CoreAudio.framework */; };
-		1FA9B15A18F135D100F6979F /* sfx1.wav in Resources */ = {isa = PBXBuildFile; fileRef = 1FA9B15918F135D100F6979F /* sfx1.wav */; };
+		1F91D850193873A200179B46 /* sfx_mono.wav in Resources */ = {isa = PBXBuildFile; fileRef = 1F91D84E193873A200179B46 /* sfx_mono.wav */; };
+		1F91D851193873A200179B46 /* sfx_stereo.wav in Resources */ = {isa = PBXBuildFile; fileRef = 1F91D84F193873A200179B46 /* sfx_stereo.wav */; };
 		5323E6B20EAFCA74003A9687 /* CoreVideo.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5323E6B10EAFCA74003A9687 /* CoreVideo.framework */; };
 		5323E6B60EAFCA7E003A9687 /* QTKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5323E6B50EAFCA7E003A9687 /* QTKit.framework */; };
 		53E3CDFC0E86099300238D2B /* Carbon.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 53E3CDFB0E86099300238D2B /* Carbon.framework */; };
@@ -37,7 +38,8 @@
 		13E42FB307B3F0F600E4EEF1 /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = /System/Library/Frameworks/CoreData.framework; sourceTree = "<absolute>"; };
 		1F24261C1938093B0020A026 /* OpenAL.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = OpenAL.cpp; path = ../../../src/OpenAL.cpp; sourceTree = "<group>"; };
 		1F84AE5019157F3000943C3B /* CoreAudio.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreAudio.framework; path = System/Library/Frameworks/CoreAudio.framework; sourceTree = SDKROOT; };
-		1FA9B15918F135D100F6979F /* sfx1.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; name = sfx1.wav; path = ../resources/sfx1.wav; sourceTree = "<group>"; };
+		1F91D84E193873A200179B46 /* sfx_mono.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; name = sfx_mono.wav; path = ../resources/sfx_mono.wav; sourceTree = "<group>"; };
+		1F91D84F193873A200179B46 /* sfx_stereo.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; name = sfx_stereo.wav; path = ../resources/sfx_stereo.wav; sourceTree = "<group>"; };
 		1FA9B15D18F137E900F6979F /* OpenAL.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = OpenAL.h; path = ../../../include/OpenAL.h; sourceTree = "<group>"; };
 		1FCD641F192EC032002BF766 /* Resources.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Resources.h; path = ../include/Resources.h; sourceTree = "<group>"; };
 		29B97324FDCFA39411CA2CEA /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = /System/Library/Frameworks/AppKit.framework; sourceTree = "<absolute>"; };
@@ -151,8 +153,9 @@
 		29B97317FDCFA39411CA2CEA /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				1F91D84E193873A200179B46 /* sfx_mono.wav */,
+				1F91D84F193873A200179B46 /* sfx_stereo.wav */,
 				1FCD641F192EC032002BF766 /* Resources.h */,
-				1FA9B15918F135D100F6979F /* sfx1.wav */,
 				8D1107310486CEB800E47090 /* Info.plist */,
 			);
 			name = Resources;
@@ -220,7 +223,8 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				1FA9B15A18F135D100F6979F /* sfx1.wav in Resources */,
+				1F91D851193873A200179B46 /* sfx_stereo.wav in Resources */,
+				1F91D850193873A200179B46 /* sfx_mono.wav in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

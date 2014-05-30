@@ -13,54 +13,87 @@ class BasicApp : public AppBasic {
     void setup();
     void shutdown();
     void mouseDown( MouseEvent event );
-	void mouseDrag( MouseEvent event );
 	void keyDown( KeyEvent event );
 	void draw();
 
-	// This will maintain a list of points which we will draw line segments between
-	list<Vec2f>		mPoints;
-
     // The sound effect source to be played
-    OpenAL::Sound*  m_pSfx1;
+    OpenAL::Sound*  m_pSfx;
+    OpenAL::Sound*  m_pSfxUp;
+    OpenAL::Sound*  m_pSfxDown;
+    OpenAL::Sound*  m_pSfxLeft;
+    OpenAL::Sound*  m_pSfxRight;
+
+    ALuint m_monoBuffer;
 };
 
 void BasicApp::setup()
 {
     OpenAL::InitOpenAL();
-    m_pSfx1 = new OpenAL::Sound(OpenAL::CreateBuffer(ci::app::loadResource(RES_SFX1_SOUND)));
+
+    // Create a Sound with a buffer automatically
+    // OpenAL block will handle buffer cleanup
+    m_pSfx = new OpenAL::Sound(ci::app::loadResource(RES_SFX_STEREO_SOUND));
+
+    // Create multiple sounds that share the same buffer
+    // Your application is responsible for buffer cleanup
+    // Note that 3D audio only works with MONO sounds
+    m_monoBuffer = OpenAL::CreateBuffer(ci::app::loadResource(RES_SFX_MONO_SOUND));
+    m_pSfxUp    = new OpenAL::Sound(m_monoBuffer);
+    m_pSfxDown  = new OpenAL::Sound(m_monoBuffer);
+    m_pSfxLeft  = new OpenAL::Sound(m_monoBuffer);
+    m_pSfxRight = new OpenAL::Sound(m_monoBuffer);
+    m_pSfxUp->m_position    = Vec3f( 0.f,  1.f,  0.f);
+    m_pSfxDown->m_position  = Vec3f( 0.f, -1.f,  0.f);
+    m_pSfxLeft->m_position  = Vec3f(-1.f,  0.f,  0.f);
+    m_pSfxRight->m_position = Vec3f( 1.f,  0.f,  0.f);
 }
 void BasicApp::shutdown()
 {
-    delete m_pSfx1;
+    delete m_pSfx;
+    delete m_pSfxUp;
+    delete m_pSfxDown;
+    delete m_pSfxLeft;
+    delete m_pSfxRight;
+
+    OpenAL::DestroyBuffer(m_monoBuffer);
+
     OpenAL::DestroyOpenAL();
 }
 
 void BasicApp::mouseDown( MouseEvent event )
 {
-    m_pSfx1->Play();
-}
-
-void BasicApp::mouseDrag( MouseEvent event )
-{
-	mPoints.push_back( event.getPos() );
+    m_pSfx->Play();
 }
 
 void BasicApp::keyDown( KeyEvent event )
 {
-	if( event.getChar() == 'f' )
-		setFullScreen( ! isFullScreen() );
+	auto key = event.getCode();
+
+    switch (key)
+    {
+        case ci::app::KeyEvent::KEY_UP:
+            m_pSfxUp->Play();
+            break;
+        case ci::app::KeyEvent::KEY_DOWN:
+            m_pSfxDown->Play();
+            break;
+        case ci::app::KeyEvent::KEY_LEFT:
+            m_pSfxLeft->Play();
+            break;
+        case ci::app::KeyEvent::KEY_RIGHT:
+            m_pSfxRight->Play();
+            break;
+        case ci::app::KeyEvent::KEY_ESCAPE:
+            quit();
+            break;
+        default:
+            break;
+    }
 }
 
 void BasicApp::draw()
 {
 	gl::clear( Color( 0.1f, 0.1f, 0.15f ) );
-
-	gl::color( 1.0f, 0.5f, 0.25f );	
-	gl::begin( GL_LINE_STRIP );
-	for( auto pointIter = mPoints.begin(); pointIter != mPoints.end(); ++pointIter ) {
-		gl::vertex( *pointIter );
-	}
-	gl::end();
 }
 
 // This line tells Cinder to actually create the application
