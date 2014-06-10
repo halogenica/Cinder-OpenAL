@@ -15,6 +15,7 @@ namespace OpenAL
 
 class Sound;
 
+// OpenAL context and device for playback; this block uses a single global context and device
 extern ALCdevice*           g_pAlDevice;
 extern ALCcontext*          g_pAlContext;
 
@@ -24,19 +25,35 @@ extern std::deque<ALuint>   g_sources;
 // A list of internally created buffers
 extern std::deque<ALuint>   g_buffers;
 
+// The total number of buffers and sources created by an application using this block
+extern unsigned int         g_numBuffers;
+extern unsigned int         g_numSources;
+
+
 static void InitOpenAL()
 {
     try
     {
         g_pAlDevice = alcOpenDevice(NULL);
         if (g_pAlDevice == NULL)
+        {
             throw ("Error occurred creating AL device");
+        }
+
         g_pAlContext = alcCreateContext(g_pAlDevice, NULL);
         if (g_pAlContext == NULL)
+        {
             throw ("Error occurred creating AL context");
+        }
+
         alcMakeContextCurrent(g_pAlContext);
         if (alGetError() != AL_NO_ERROR)
+        {
             throw ("Error occurred initializing OpenAL");
+        }
+
+        g_numBuffers = 0;
+        g_numSources = 0;
     }
     catch(std::string error) 
     {
@@ -130,7 +147,9 @@ static ALuint CreateBuffer(const ci::DataSourceRef& ref)
     try
     {
         if (alGetError() != AL_NO_ERROR)
+        {
             throw ("Error occurred before loading wav");
+        }
 
         pRiffHeader = reinterpret_cast<RIFF_Header*>(pRefBuffer);
         ptrOffset += sizeof(RIFF_Header);
@@ -143,7 +162,9 @@ static ALuint CreateBuffer(const ci::DataSourceRef& ref)
                 pRiffHeader->format[1] != 'A' ||
                 pRiffHeader->format[2] != 'V' ||
                 pRiffHeader->format[3] != 'E'))
-                    throw ("Invalid RIFF or WAVE Header");
+        {
+            throw ("Invalid RIFF or WAVE Header");
+        }
 
         // Read in the 2nd chunk for the wave info
         pWaveFormat = (WAVE_Format*)(pRefBuffer + ptrOffset);
@@ -153,7 +174,9 @@ static ALuint CreateBuffer(const ci::DataSourceRef& ref)
             pWaveFormat->subChunkID[1] != 'm' ||
             pWaveFormat->subChunkID[2] != 't' ||
             pWaveFormat->subChunkID[3] != ' ')
-                    throw ("Invalid Wave Format");
+        {
+            throw ("Invalid Wave Format");
+        }
 
         // Check for extra parameters
         if (pWaveFormat->subChunkSize > 16)
@@ -169,41 +192,60 @@ static ALuint CreateBuffer(const ci::DataSourceRef& ref)
             pWaveData->subChunkID[1] != 'a' ||
             pWaveData->subChunkID[2] != 't' ||
             pWaveData->subChunkID[3] != 'a')
-                    throw ("Invalid data header");
+        {
+            throw ("Invalid data header");
+        }
 
         ALsizei size = static_cast<ALsizei>(pWaveData->subChunk2Size);
         if (ref->getBuffer().getDataSize() != size + ptrOffset)
+        {
             throw ("Buffer size different than reported size");
+        }
 
         ALsizei frequency = static_cast<ALsizei>(pWaveFormat->sampleRate);
         ALenum  format;
         // The format is worked out by looking at the number of
         // Channels and the bits per sample.
-        if (pWaveFormat->numChannels == 1) {
+        if (pWaveFormat->numChannels == 1) 
+        {
             if (pWaveFormat->bitsPerSample == 8 )
+            {
                 format = AL_FORMAT_MONO8;
+            }
             else if (pWaveFormat->bitsPerSample == 16)
+            {
                 format = AL_FORMAT_MONO16;
-        } else if (pWaveFormat->numChannels == 2) {
+            }
+        }
+        else if (pWaveFormat->numChannels == 2) 
+        {
             if (pWaveFormat->bitsPerSample == 8 )
+            {
                 format = AL_FORMAT_STEREO8;
+            }
             else if (pWaveFormat->bitsPerSample == 16)
+            {
                 format = AL_FORMAT_STEREO16;
+            }
         }
 
         // Create our openAL buffer and check for success
         alGenBuffers(1, &alBuffer);
         if (alGetError() != AL_NO_ERROR)
+        {
             throw ("alGenBuffers threw an error");
+        }
         // Now we put our data into the openAL buffer and check for success
         alBufferData(alBuffer, format, (void*)(pRefBuffer + ptrOffset), size, frequency);
         if (alGetError() != AL_NO_ERROR)
+        {
             throw ("alBufferData threw an error");
+        }
+        ++g_numBuffers;
     }
     catch(std::string error) 
     {
-        std::cerr << error << " : trying to load "
-            << ref->getFilePath() << std::endl;
+        std::cerr << error << " : trying to load " << ref->getFilePath() << std::endl;
         return 0;
     }
     return alBuffer;
@@ -211,7 +253,20 @@ static ALuint CreateBuffer(const ci::DataSourceRef& ref)
 
 static void DestroyBuffer(ALuint alBuffer)
 {
-    alDeleteBuffers(1, &alBuffer);
+    try
+    {
+        alDeleteBuffers(1, &alBuffer);
+
+        if (alGetError() != AL_NO_ERROR)
+        {
+            throw ("Error occurred deleting OpenAL buffer");
+        }
+        --g_numBuffers;
+    }
+    catch(std::string error) 
+    {
+        std::cerr << error << std::endl;
+    }
 }
 
 // TODO: allow users to create and manage their own sources
@@ -241,11 +296,7 @@ public:
 
     ~Sound()
     {
-        if (m_source)
-        {
-            alSourceStop(m_source);
-            g_sources.push_back(m_source);
-        }
+        Stop();
     }
 
     // Convenience function for playing an "overlapping" sound (instead of restarting the sound)
@@ -274,7 +325,9 @@ public:
             alSourcePlay(m_source);
 
             if (alGetError() != AL_NO_ERROR)
+            {
                 throw ("Error occurred playing OpenAL sound");
+            }
         }
         catch(std::string error) 
         {
@@ -291,13 +344,11 @@ public:
                 alSourceStop(m_source);
                 g_sources.push_back(m_source);
             }
-            else
-            {
-                throw ("Stopping a source that wasn't playing");
-            }
 
             if (alGetError() != AL_NO_ERROR)
+            {
                 throw ("Error occurred stopping OpenAL sound");
+            }
         }
         catch(std::string error) 
         {
@@ -313,13 +364,11 @@ public:
             {
                 alSourcePause(m_source);
             }
-            else
-            {
-                throw ("Pausing a source that wasn't playing");
-            }
 
             if (alGetError() != AL_NO_ERROR)
+            {
                 throw ("Error occurred stopping OpenAL sound");
+            }
         }
         catch(std::string error) 
         {
@@ -337,12 +386,17 @@ private:
         try
         {
             if (alGetError() != AL_NO_ERROR)
+            {
                 throw ("Error occurred before creating source");
+            }
 
             // Create our openAL source and check for success
             alGenSources(1, &alSource);
             if (alGetError() != AL_NO_ERROR)
+            {
                 throw ("alGenSources threw an error");
+            }
+            ++g_numSources;
         }
         catch(std::string error) 
         {
@@ -359,7 +413,9 @@ private:
         try
         {
             if (alGetError() != AL_NO_ERROR)
+            {
                 throw ("Error occurred before getting source");
+            }
 
             bool sourceFound = false;
             int i = 0;
@@ -398,7 +454,9 @@ private:
                 alSourcefv(alSource, AL_VELOCITY, sourceVel);
                 alSourcei (alSource, AL_LOOPING,  m_looping );
                 if (alGetError() != AL_NO_ERROR)
+                {
                     throw ("Error setting source parameters");
+                }
             }
         }
         catch(std::string error) 
