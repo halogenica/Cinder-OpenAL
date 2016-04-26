@@ -1,14 +1,18 @@
-#include "cinder/app/AppBasic.h"
+#include "cinder/app/App.h"
+#include "cinder/app/RendererGl.h"
+#include "cinder/gl/gl.h"
+
 #include "Resources.h"
 #include "OpenAL.h"
 #include <list>
+
 
 using namespace ci;
 using namespace ci::app;
 using namespace std;
 
 // We'll create a new Cinder Application by deriving from the AppBasic class
-class BasicApp : public AppBasic {
+class BasicApp : public App{
   public:
     void setup();
     void shutdown();
@@ -42,10 +46,10 @@ void BasicApp::setup()
     m_pSfxDown  = new OpenAL::Sound(m_monoBuffer);
     m_pSfxLeft  = new OpenAL::Sound(m_monoBuffer);
     m_pSfxRight = new OpenAL::Sound(m_monoBuffer);
-    m_pSfxUp->m_position    = Vec3f( 0.f,  1.f,  0.f);
-    m_pSfxDown->m_position  = Vec3f( 0.f, -1.f,  0.f);
-    m_pSfxLeft->m_position  = Vec3f(-1.f,  0.f,  0.f);
-    m_pSfxRight->m_position = Vec3f( 1.f,  0.f,  0.f);
+    m_pSfxUp->m_position    = vec3( 0.f,  1.f,  0.f);
+	m_pSfxDown->m_position = vec3(0.f, -1.f, 0.f);
+	m_pSfxLeft->m_position = vec3(-1.f, 0.f, 0.f);
+	m_pSfxRight->m_position = vec3(1.f, 0.f, 0.f);
 }
 void BasicApp::shutdown()
 {
@@ -97,4 +101,4 @@ void BasicApp::draw()
 }
 
 // This line tells Cinder to actually create the application
-CINDER_APP_BASIC( BasicApp, RendererGl )
+CINDER_APP(BasicApp, RendererGl)
