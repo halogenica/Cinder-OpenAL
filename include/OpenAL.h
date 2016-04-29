@@ -85,19 +85,19 @@ static void DestroyOpenAL()
     alcCloseDevice(g_pAlDevice);
 }
 
-static void SetListenerPosition(const ci::Vec3f& position)
+static void SetListenerPosition(const ci::vec3& position)
 {
     ALfloat ListenerPos[] = { position.x, position.y, position.z };
     alListenerfv(AL_POSITION,    ListenerPos);
 }
 
-static void SetListenerVelocity(const ci::Vec3f& velocity)
+static void SetListenerVelocity(const ci::vec3& velocity)
 {
     ALfloat ListenerVel[] = { velocity.x, velocity.y, velocity.z };
     alListenerfv(AL_VELOCITY,    ListenerVel);
 }
 
-static void SetListenerOrientation(const ci::Vec3f& forward, const ci::Vec3f& up)
+static void SetListenerOrientation(const ci::vec3& forward, const ci::vec3& up)
 {
     ALfloat ListenerOri[] = { forward.x, forward.y, forward.z, up.x, up.y, up.z };
     alListenerfv(AL_ORIENTATION, ListenerOri);
@@ -137,7 +137,7 @@ static ALuint CreateBuffer(const ci::DataSourceRef& ref)
         long subChunk2Size;     // Stores the size of the data block
     };
 
-    char*           pRefBuffer = static_cast<char*>(ref->getBuffer().getData());
+    char*           pRefBuffer = static_cast<char*>(ref->getBuffer()->getData());
     RIFF_Header*    pRiffHeader;
     WAVE_Format*    pWaveFormat;
     WAVE_Data*      pWaveData;
@@ -197,7 +197,7 @@ static ALuint CreateBuffer(const ci::DataSourceRef& ref)
         }
 
         ALsizei size = static_cast<ALsizei>(pWaveData->subChunk2Size);
-        if (ref->getBuffer().getDataSize() != size + ptrOffset)
+        if (ref->getBuffer()->getSize()/*getDataSize()*/ != size + ptrOffset)
         {
             throw ("Buffer size different than reported size");
         }
@@ -277,18 +277,18 @@ class Sound
 public:
     float       m_pitch;
     float       m_gain;
-    ci::Vec3f   m_position;
-    ci::Vec3f   m_velocity;
+	ci::vec3   m_position;
+	ci::vec3   m_velocity;
     bool        m_looping;
 
     Sound(const ALuint& alBuffer) : 
-        m_buffer(alBuffer), m_source(0), m_pitch(1.f), m_gain(1.f), m_position(ci::Vec3f(0.f, 0.f, 0.f)), m_velocity(ci::Vec3f(0.f, 0.f, 0.f)), m_looping(false)
+		m_buffer(alBuffer), m_source(0), m_pitch(1.f), m_gain(1.f), m_position(ci::vec3(0.f, 0.f, 0.f)), m_velocity(ci::vec3(0.f, 0.f, 0.f)), m_looping(false)
     {
     }
 
     // Convenience function if not reusing buffer
     Sound(const ci::DataSourceRef& ref) : 
-        m_buffer(0), m_source(0), m_pitch(1.f), m_gain(1.f), m_position(ci::Vec3f(0.f, 0.f, 0.f)), m_velocity(ci::Vec3f(0.f, 0.f, 0.f)), m_looping(false)
+		m_buffer(0), m_source(0), m_pitch(1.f), m_gain(1.f), m_position(ci::vec3(0.f, 0.f, 0.f)), m_velocity(ci::vec3(0.f, 0.f, 0.f)), m_looping(false)
     {
         m_buffer = CreateBuffer(ref);
         g_buffers.push_back(m_buffer);
